@@ -5,10 +5,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SimpleServer extends Thread {
-    Socket s;
-    int num;
+    private Socket s;
+    private int num;
 
-    public static void main(String args[])
+    public static void main(String[] args)
     {
         try
         {
@@ -20,7 +20,8 @@ public class SimpleServer extends Thread {
 
             System.out.println("server is started");
 
-            // слушаем порт
+            // бесконечно слушаем порт
+            //noinspection InfiniteLoopStatement
             while(true)
             {
                 // ждём нового подключения, после чего запускаем обработку клиента
@@ -33,7 +34,8 @@ public class SimpleServer extends Thread {
         {System.out.println("init error: "+e);} // вывод исключений
     }
 
-    public SimpleServer(int num, Socket s)
+
+    private SimpleServer(int num, Socket s)
     {
         // копируем данные
         this.num = num;
@@ -45,6 +47,9 @@ public class SimpleServer extends Thread {
         start();
     }
 
+    /**
+     * Процедура выполняется в отдельном треде
+     */
     public void run()
     {
         try
@@ -55,7 +60,7 @@ public class SimpleServer extends Thread {
             OutputStream os = s.getOutputStream();
 
             // буффер данных в 64 килобайта
-            byte buf[] = new byte[64*1024];
+            byte[] buf = new byte[64 * 1024];
             // читаем 64кб от клиента, результат - кол-во реально принятых данных
             int r = is.read(buf);
 
@@ -68,7 +73,7 @@ public class SimpleServer extends Thread {
             // выводим данные:
             os.write(data.getBytes());
             System.out.println();
-            System.out.println(data.toString());
+            System.out.println(data);
             System.out.println();
             // завершаем соединение
             s.close();
